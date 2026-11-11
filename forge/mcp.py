@@ -35,7 +35,8 @@ apps/<app>/tests/test_*.py      unittest files. They run with NO network and NO 
 
 apps/<app>/evals/golden.jsonl   one JSON object per line, the cases every future change is scored against:
     {"id": "basic", "input": {"text": "Hello World"}, "expect": {"answer": "hello-world"}}
-    Checks (all optional): "expect" exact output, "must_include" [..], "must_not_include" [..], "max_chars" n,
+    Checks (all optional): "expect" exact output, "answer" exact answer text (case and outer spaces ignored),
+    "must_include" [..], "must_not_include" [..], "max_chars" n,
     "rubric" "..." (rubric needs a model; the others do not).
 
 Apps need no AI model. Only use one if the task needs it:

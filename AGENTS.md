@@ -1,6 +1,8 @@
 # Instructions for AI agents working in this repository
 
-This project is Forge: a system that builds, tests and improves small apps behind gates, with a human approving every release.
+This project is Forge: a system that builds, tests and improves small apps behind gates. Changes from agents wait for the owner's approval.
+
+If Forge started you to build an app, its prompt names an open change: work only on that change with the tools it lists, and do not call `start_change` or `submit_change`.
 
 To build a new app or change an existing one, **use the `forge` MCP tools, not direct edits to this folder**:
 

@@ -19,6 +19,7 @@ def run(app, root=None):
         low = text.lower()
         passed = (r["ok"]
                   and ("expect" not in case or out == case["expect"])
+                  and ("answer" not in case or text.strip().lower() == str(case["answer"]).strip().lower())
                   and all(s.lower() in low for s in case.get("must_include", []))
                   and not any(s.lower() in low for s in case.get("must_not_include", []))
                   and len(text) <= case.get("max_chars", 10**9))

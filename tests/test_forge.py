@@ -200,6 +200,40 @@ class ForgeTest(unittest.TestCase):
         self.assertTrue(bad["result"]["isError"])
         self.assertIn("error", mcp.handle({"id": 4, "method": "nope"}))
 
+    def test_examples_become_fixed_golden_cases(self):
+        from forge import builder
+        cases = builder.parse_examples("2+3*4 -> 14\n\n  sqrt(16) => 4 \nf(x)->y -> z\n10 → ten")
+        self.assertEqual([(c["input"]["input"], c["answer"]) for c in cases],
+                         [("2+3*4", "14"), ("sqrt(16)", "4"), ("f(x)->y", "z"), ("10", "ten")])
+        self.assertEqual(builder.parse_examples(""), [])
+        with self.assertRaisesRegex(ValueError, "arrow"):
+            builder.parse_examples("no arrow here")
+        evals_dir = self.tmp / "apps" / "x" / "evals"
+        evals_dir.mkdir(parents=True)
+        (evals_dir / "golden.jsonl").write_text(
+            '{"id": "you-1", "input": {"input": "2+3*4"}, "answer": "99"}\n{"id": "mine", "input": {}}\n', "utf-8")
+        builder.restore_examples(self.tmp, "x", cases[:1])  # the builder edited the owner's answer: put it back
+        lines = (evals_dir / "golden.jsonl").read_text("utf-8").splitlines()
+        self.assertEqual(lines, ['{"id": "you-1", "input": {"input": "2+3*4"}, "answer": "14"}', '{"id": "mine", "input": {}}'])
+
+    def test_app_names_come_from_the_idea_and_never_clash(self):
+        from forge import builder
+        self.assertEqual(builder.name_for("Make me a scientific calculator app"), "scientific_calculator")
+        self.assertEqual(builder.name_for("A tool to convert units"), "tool_convert_units")
+        self.assertEqual(builder.name_for("Convert currencies between euros and dollars"), "convert_currencies")
+        self.assertEqual(builder.name_for("Convert temperatures between C and F"), "convert_temperatures_2")  # taken
+        self.assertTrue(builder.name_for("Slugify things").startswith("slugify_things"))
+        with self.assertRaisesRegex(ValueError, "already exists"):
+            builder.name_for("anything", "slugify")
+        with self.assertRaises(ValueError):
+            builder.name_for("anything", "Bad Name!")
+
+    def test_dashboard_pages_render(self):
+        from forge import dashboard
+        for html in (dashboard.build_home(), dashboard.apps_page(), dashboard.build_home({"idea": "<script>"}, "oops")):
+            self.assertIn("<!doctype html>", html)
+            self.assertNotIn("<script>", html)  # everything typed by a person is escaped
+
     def test_parse_reads_cause_and_files_and_rejects_free_text(self):
         cause, files = improve.parse("CAUSE: a bug\nFILE: apps/x/app.py\n<<<\nprint(1)\n>>>\n")
         self.assertEqual((cause, files), ("a bug", {"apps/x/app.py": "print(1)\n"}))

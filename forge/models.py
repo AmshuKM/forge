@@ -92,9 +92,15 @@ def pick(models, vram=None):
             "fast": by_size[0], "big": by_size[-1]}
 
 
-def render(roles):
+def builders():
+    """Who can build apps from an idea, best first: Claude Code if installed, then the local model."""
+    return (["claude"] if shutil.which("claude") else []) + ["local"]
+
+
+def render(roles, builder="local"):
     lines = ["# This computer's models. Written by: python -m forge.cli setup",
-             "# Not shared through Git. Edit a model line by hand, or run setup again to choose.", ""]
+             "# Not shared through Git. Edit a model line by hand, or run setup again to choose.", "",
+             "[builder]", f"kind = {json.dumps(builder)}   # claude = Claude Code, local = the think model below", ""]
     for name in dict.fromkeys(m["endpoint"] for m in roles.values()):
         m = next(r for r in roles.values() if r["endpoint"] == name)
         lines += [f"[endpoints.{name}]", f"base = {json.dumps(m['base'])}"]
@@ -132,20 +138,36 @@ def choose(models, roles):
     return roles
 
 
+def choose_builder(options):
+    names = {"claude": "Claude Code (best results; uses your Claude plan or API credit)",
+             "local": "your local model (free; slower, and small models fail more builds)"}
+    print("\nWho should build apps from your ideas?")
+    for i, b in enumerate(options, 1):
+        print(f"  {i}. {names[b]}")
+    answer = input("  Builder [1]: ").strip()
+    return options[int(answer) - 1] if answer.isdigit() and 1 <= int(answer) <= len(options) else options[0]
+
+
 def setup(interactive=True):
     models, notes = detect()
     for n in notes:
         print(n)
-    if not models:
-        print("No local model server was found. Start Ollama, LM Studio, llama.cpp, vLLM or Unsloth and run\n"
-              "python -m forge.cli setup again. Apps that use no model work without one.")
+    options = builders()
+    if not models and options == ["local"]:
+        print("No local model server and no Claude Code were found. Install either one (Ollama, LM Studio,\n"
+              "llama.cpp, vLLM, Unsloth, or Claude Code) and run python -m forge.cli setup again.\n"
+              "Apps that use no model still work without one.")
         return False
-    roles = pick(models, vram_gb())
-    if interactive:
+    if not models:
+        print("No local model server was found, so apps that call a model will not work. Claude Code can still build apps.")
+    roles = pick(models, vram_gb()) if models else {}
+    if interactive and models:
         roles = choose(models, roles)
+    builder = choose_builder(options) if interactive and len(options) > 1 else options[0]
     router.local_path().parent.mkdir(parents=True, exist_ok=True)
-    router.local_path().write_text(render(roles), "utf-8")
+    router.local_path().write_text(render(roles, builder), "utf-8")
     print(f"\nSaved to {router.local_path()}:")
+    print(f"  builder {'Claude Code' if builder == 'claude' else 'local model'}")
     for role, m in roles.items():
-        print(f"  {role:<6} {describe(m)}")
+        print(f"  {role:<7} {describe(m)}")
     return True

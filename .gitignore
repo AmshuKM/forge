@@ -1,3 +1,7 @@
 .forge/
 config/local.toml
+.claude/settings.local.json
+# Apps built on this computer and kept out of the shared repo; delete a line to share that app.
+apps/sci_calc/
+apps/convert_temperatures/
 __pycache__/

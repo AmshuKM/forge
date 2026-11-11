@@ -311,12 +311,17 @@ def agent_gate(p, wt):
     touched = [f for f in paths if re.match(rf"apps/{app}/(tests|evals)/", f) and (ROOT / f).exists()]
     if touched:
         gate["warning"] = "This change edits existing tests or golden cases: " + ", ".join(touched)
+    store.stage(p["id"], "tests")
     ok, gate["tests"] = sandbox.tests(wt, app)
+    store.stage(p["id"], "tests", ok)
     if not ok:
         return {**gate, "ok": False, "why": "unit tests failed:\n" + gate["tests"][-1500:]}
+    store.stage(p["id"], "scans")
     ok, gate["scans"] = sandbox.scans(wt)
+    store.stage(p["id"], "scans", ok)
     if not ok:
         return {**gate, "ok": False, "why": "a security scan failed:\n" + gate["scans"][-1500:]}
+    store.stage(p["id"], "examples")
     card = gate["after"] = sandbox.evals(wt, app)
     limit_ms = router.config()["gates"]["p95_ms"]
     if new_app:  # no baseline yet: the app's own golden set defines "done"
@@ -326,6 +331,7 @@ def agent_gate(p, wt):
     else:
         gate["before"] = evals.latest(app) or evals.run(app)
         why = evals.compare(gate["before"], card, must_improve=False, limit_ms=limit_ms)
+    store.stage(p["id"], "examples", not why)
     return {**gate, "ok": not why, "why": "; ".join(why)}
 
 

@@ -59,6 +59,16 @@ def kv_set(key, value):
     x("insert into kv(k,v) values(?,?) on conflict(k) do update set v=excluded.v", key, json.dumps(value))
 
 
+def stage(pid, name, ok=None):
+    """One check's progress for the build page. ok=None marks it started; True or False marks it finished."""
+    stages, now = kv_get(f"stages:{pid}", {}), time.time()
+    if ok is None:
+        stages[name] = {"start": now}
+    else:
+        stages.setdefault(name, {"start": now}).update(ok=bool(ok), end=now)
+    kv_set(f"stages:{pid}", stages)
+
+
 def today():
     t = time.localtime()
     return time.mktime((t.tm_year, t.tm_mon, t.tm_mday, 0, 0, 0, 0, 0, -1))
