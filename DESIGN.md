@@ -20,12 +20,12 @@ colors:
   ramp-9: "#12161C"
 typography:
   display:
-    fontFamily: "Bahnschrift, DIN Alternate, Avenir Next Condensed, Arial Narrow, system-ui, sans-serif"
+    fontFamily: "Barlow Condensed, Bahnschrift, DIN Alternate, Avenir Next Condensed, Arial Narrow, system-ui, sans-serif"
     fontSize: "2.25rem"
     fontWeight: 700
     lineHeight: 1.1
   label:
-    fontFamily: "Bahnschrift, DIN Alternate, Avenir Next Condensed, Arial Narrow, system-ui, sans-serif"
+    fontFamily: "Barlow Condensed, Bahnschrift, DIN Alternate, Avenir Next Condensed, Arial Narrow, system-ui, sans-serif"
     fontSize: "0.875rem"
     fontWeight: 700
     lineHeight: 1.2
@@ -79,7 +79,7 @@ components:
   platform-number:
     backgroundColor: "{colors.signal-yellow}"
     textColor: "{colors.ramp-9}"
-    rounded: "5px"
+    rounded: "{rounded.control}"
 ---
 
 # Design System: Forge
@@ -97,7 +97,7 @@ The system is restrained and precise. A navy rail carries the navigation; a cool
 - Numbers lead: builds and apps carry their number in a yellow platform tile.
 - One tonal ramp feeds both light and dark themes.
 - Flat colour throughout; no gradients, glows, grain or faked material.
-- Works offline: system fonts, inline CSS, no external requests.
+- Works offline: one bundled signage font, system fonts for reading text, inline CSS, no external requests.
 
 ## Colors
 
@@ -121,7 +121,7 @@ A cool, flat palette: one ramp of blue-greys, a navy rail and a single signal ye
 
 ## Typography
 
-**Display Font:** Bahnschrift (DIN signage face on Windows), with DIN Alternate, Avenir Next Condensed and Arial Narrow as fallbacks
+**Display Font:** Barlow Condensed Bold, bundled in `forge/static/` under the SIL Open Font License and served by the dashboard itself, with Bahnschrift, DIN Alternate and Arial Narrow as fallbacks
 **Body Font:** Segoe UI with the platform system font as fallback
 **Label/Mono Font:** Cascadia Mono, Consolas or SF Mono, for times, durations and examples
 
@@ -149,16 +149,16 @@ Flat. There are no shadows. Depth comes from tonal layering only: ground, then p
 
 ## Shapes
 
-Small, consistent corners: 3px on flap tiles, 6px on buttons and fields, 8px on panels, tables and the board, 5px on platform-number tiles. Borders are 1px ramp lines. Flap tiles carry a 1px hairline across their middle, drawn behind the letter.
+Small, consistent corners: 3px on flap tiles, 6px on buttons and fields, 8px on panels, tables and the board. Platform-number tiles share the 6px control corner and the small waiting-count badge the 3px tile corner. Borders are 1px ramp lines. Flap tiles carry a 1px hairline across their middle, drawn behind the letter.
 
 ## Components
 
 ### Buttons
 - **Shape:** gently rounded (6px).
-- **Primary:** rail navy with white text (12px 20px) in light mode; in dark mode ramp-1 with ramp-9 text.
+- **Primary:** rail navy with ramp-0 text (12px 20px) in light mode; in dark mode ramp-1 with ramp-9 text.
 - **Hover / Focus:** hover moves to ramp-6; focus is a 3px outline offset 2px, navy in light mode and signal yellow in dark mode and on the rail.
 - **Quiet:** transparent with a ramp-3 border, for secondary actions.
-- **Danger:** failed red with white text, only for actions that stop or reject.
+- **Danger:** failed red with ramp-0 text, only for actions that stop or reject.
 
 ### Cards / Containers
 - **Corner Style:** 8px.
@@ -174,7 +174,7 @@ Small, consistent corners: 3px on flap tiles, 6px on buttons and fields, 8px on 
 
 ### Navigation
 - **Style:** the navy rail with FORGE in tracked condensed caps, then page links in semibold body type.
-- **States:** links rest at a pale blue-grey and turn white on hover; the current page is white with a 3px signal-yellow underline. A count of changes waiting for approval sits in a small yellow badge.
+- **States:** links rest at ramp-2 and turn ramp-0 on hover; the current page is ramp-0 with a 3px signal-yellow underline. A count of changes waiting for approval sits in a small yellow badge.
 - **Mobile:** the brand takes its own row and the links wrap beneath it.
 
 ### Departure Board (signature)
@@ -195,4 +195,4 @@ A build's or app's number in a yellow tile at the start of the heading or name, 
 - **Don't** use a black screen with green monospace text, or any terminal styling.
 - **Don't** use gradients, glows, sparkle icons or glass.
 - **Don't** put a small label above a heading; the heading carries its own weight.
-- **Don't** add external fonts, scripts or images; the dashboard must work offline.
+- **Don't** load fonts, scripts or images from the internet; anything new is bundled and served locally, so the dashboard works offline.
