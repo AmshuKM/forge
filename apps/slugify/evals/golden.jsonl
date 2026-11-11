@@ -1,0 +1,5 @@
+{"id": "basic", "input": {"text": "Hello, World!"}, "expect": {"answer": "hello-world"}}
+{"id": "accents", "input": {"text": "Cr\u00e8me Br\u00fbl\u00e9e Recipe"}, "expect": {"answer": "creme-brulee-recipe"}}
+{"id": "symbols", "input": {"text": "10 Tips & Tricks (2026 edition)"}, "expect": {"answer": "10-tips-tricks-2026-edition"}}
+{"id": "spaces", "input": {"text": "   many     spaces   "}, "expect": {"answer": "many-spaces"}}
+{"id": "underscores", "input": {"text": "snake_case_title"}, "expect": {"answer": "snake-case-title"}}
