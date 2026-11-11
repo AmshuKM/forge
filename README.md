@@ -27,7 +27,7 @@ Design and reasoning: [ARCHITECTURE.md](ARCHITECTURE.md).
 ## Quick start
 
 ```bash
-git clone <your-repo-url> forge
+git clone https://github.com/AmshuKM/forge.git
 ```
 
 ```bash
