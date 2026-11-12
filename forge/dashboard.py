@@ -470,7 +470,7 @@ class Handler(BaseHTTPRequestHandler):
         elif path == "/build":
             pid = query.get("id", [""])[0]
             seen = query.get("seen", [""])[0]
-            self.reply(build_page(int(pid), seen if seen.isalpha() else "") if pid.isdigit() else page("Not found", "<p>No such build.</p>"))
+            self.reply(build_page(int(pid), seen if seen.isalpha() else "") if pid.isdigit() else build_home())  # no build number: the form that starts one
         elif path == "/review":
             self.reply(review_page())
         elif path == "/health":

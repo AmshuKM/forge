@@ -16,7 +16,11 @@ _lock = threading.Lock()  # one build at a time: they compete for the GPU and th
 ARROW = re.compile(r"\s*(?:→|=>|->)\s*")
 CLAUDE_TOOLS = "mcp__forge__guide,mcp__forge__read_file,mcp__forge__write_file,mcp__forge__check_change"
 STOP_WORDS = {"a", "an", "the", "app", "that", "which", "make", "build", "create", "me", "for", "to", "and",
-              "with", "i", "want", "please", "can", "you", "of", "my"}
+              "with", "i", "want", "please", "can", "you", "of", "my", "is", "it", "this", "some", "any",
+              "tool", "program", "simple", "given"}
+# Words that start the details ("count words IN a text"): a name with two words already ends before one.
+JOINERS = {"in", "on", "at", "by", "from", "into", "between", "using", "as", "when", "if", "so", "then", "or",
+           "but", "per", "via", "where"}
 
 
 def name_for(idea, wanted=""):
@@ -28,7 +32,16 @@ def name_for(idea, wanted=""):
         if name in runtime.apps():
             raise ValueError(f"An app called {name} already exists. Pick another name.")
         return name
-    words = [w for w in re.findall(r"[a-z][a-z0-9]*", idea.lower()) if w not in STOP_WORDS][:3] or ["app"]
+    words = []
+    for w in re.findall(r"[a-z][a-z0-9]*", idea.lower()):
+        if w in JOINERS:
+            if len(words) >= 2:
+                break
+        elif w not in STOP_WORDS:
+            words.append(w)
+            if len(words) == 3:
+                break
+    words = words or ["app"]
     base = words[0][:24]
     for w in words[1:]:  # whole words only, so names never end mid-word
         if len(base) + 1 + len(w) > 24:

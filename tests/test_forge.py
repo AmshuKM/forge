@@ -219,7 +219,9 @@ class ForgeTest(unittest.TestCase):
     def test_app_names_come_from_the_idea_and_never_clash(self):
         from forge import builder
         self.assertEqual(builder.name_for("Make me a scientific calculator app"), "scientific_calculator")
-        self.assertEqual(builder.name_for("A tool to convert units"), "tool_convert_units")
+        self.assertEqual(builder.name_for("A tool to convert units"), "convert_units")
+        self.assertEqual(builder.name_for("Count the words in a piece of text"), "count_words")
+        self.assertEqual(builder.name_for("In a sentence, reverse every word"), "sentence_reverse_every")
         self.assertEqual(builder.name_for("Convert currencies between euros and dollars"), "convert_currencies")
         self.assertEqual(builder.name_for("Convert temperatures between C and F"), "convert_temperatures_2")  # taken
         self.assertTrue(builder.name_for("Slugify things").startswith("slugify_things"))
