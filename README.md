@@ -2,6 +2,8 @@
 
 Type an app idea. Get a working app.
 
+![The Forge build page: a departure board showing each check for a new app flipping from WAIT to PASSED](docs/screenshot.png)
+
 ```mermaid
 flowchart LR
   I["Your idea, plus examples it must get right"] --> F["Forge: builds, tests in a sandbox, scans, checks your examples"]
@@ -123,4 +125,4 @@ python -m unittest discover -s tests
 - Only apps you asked for yourself go live without a click, and only after passing every check. Everything else waits for you. The Health page has a switch that stops all self-improvement.
 - This is a personal tool, not a hardened multi-user service. Do not expose the dashboard to a network.
 
-MIT licence. See [LICENSE](LICENSE).
+MIT licence. See [LICENSE](LICENSE). The bundled font is Barlow Condensed, under the SIL Open Font License in [forge/static/OFL.txt](forge/static/OFL.txt).
